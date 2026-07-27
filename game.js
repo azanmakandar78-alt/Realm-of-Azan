@@ -560,6 +560,122 @@ if (!loadGame()) {
 
 }
 
+// =====================================
+// Realm of Azan V4
+// Part B1 - Spawn System
+// =====================================
+
+// Create monsters
+function spawnMonsters(count = 15) {
+
+    game.monsters = [];
+
+    for (let i = 0; i < count; i++) {
+
+        const pos = freeTile();
+
+        game.monsters.push({
+
+            x: pos.x,
+            y: pos.y,
+
+            hp: 30,
+            maxHp: 30,
+
+            attack: 6,
+            defense: 2,
+
+            xp: 20,
+            gold: 15,
+
+            alive: true
+
+        });
+
+    }
+
+}
+
+// Create treasure chests
+function spawnChests(count = 10) {
+
+    game.chests = [];
+
+    for (let i = 0; i < count; i++) {
+
+        const pos = freeTile();
+
+        game.chests.push({
+
+            x: pos.x,
+            y: pos.y,
+
+            opened: false
+
+        });
+
+    }
+
+}
+
+// Create the Dragon Boss
+function spawnBoss() {
+
+    const pos = freeTile();
+
+    game.boss = {
+
+        x: pos.x,
+        y: pos.y,
+
+        hp: 200,
+        maxHp: 200,
+
+        attack: 20,
+        defense: 8,
+
+        alive: true
+
+    };
+
+}
+
+// Build the world
+function buildWorld() {
+
+    createWorld();
+
+    placePlayer();
+
+    spawnMonsters();
+
+    spawnChests();
+
+    spawnBoss();
+
+    redraw();
+
+    log("🌍 The world is alive!");
+
+}
+
+// Replace newGame()
+newGame = function () {
+
+    buildWorld();
+
+    log("✨ Welcome back, Hero!");
+
+};
+
+// Start game correctly
+if (!loadGame()) {
+
+    newGame();
+
+}
+
+
 // ---------- MOBILE ----------
 
 document.body.style.touchAction = "manipulation";
@@ -567,3 +683,434 @@ document.body.style.touchAction = "manipulation";
 // ---------- VERSION ----------
 
 console.log("Realm of Azan V4 Alpha");
+
+// =====================================
+// Realm of Azan V4
+// Part B2 - Battle System
+// =====================================
+
+function battle(monster) {
+
+    log("⚔️ Battle Started!");
+
+    while (monster.hp > 0 && player.hp > 0) {
+
+        // Player attack
+        let damage = Math.max(
+            1,
+            player.attack + rand(5) - monster.defense
+        );
+
+        monster.hp -= damage;
+
+        log("🗡️ You hit for " + damage + " damage.");
+
+        if (monster.hp <= 0)
+            break;
+
+        // Monster attack
+        damage = Math.max(
+            1,
+            monster.attack + rand(3) - player.defense
+        );
+
+        player.hp -= damage;
+
+        log("👹 Monster hits for " + damage + ".");
+
+    }
+
+    if (player.hp <= 0) {
+
+        player.hp = player.maxHp;
+
+        player.x = 0;
+        player.y = 0;
+
+        log("💀 You were defeated!");
+
+        redraw();
+
+        return;
+
+    }
+
+    monster.alive = false;
+
+    player.gold += monster.gold;
+
+    player.xp += monster.xp;
+
+    log("🏆 Monster defeated!");
+
+    log("⭐ +" + monster.xp + " XP");
+
+    log("🪙 +" + monster.gold + " Gold");
+
+    levelUp();
+
+    redraw();
+
+}
+
+// Level system
+function levelUp() {
+
+    while (player.xp >= player.level * 100) {
+
+        player.xp -= player.level * 100;
+
+        player.level++;
+
+        player.maxHp += 20;
+
+        player.hp = player.maxHp;
+
+        player.attack += 3;
+
+        player.defense += 1;
+        
+        log("✨ LEVEL
+        log("🎉 Level " + player.level);
+
+    }
+
+}
+
+// Replace checkEvents()
+
+checkEvents = function () {
+
+    // Battle
+    for (const monster of game.monsters) {
+
+        if (
+            monster.alive &&
+            monster.x === player.x &&
+            monster.y === player.y
+        ) {
+
+            battle(monster);
+
+            return;
+
+        }
+
+    }
+
+    // Treasure
+    for (const chest of game.chests) {
+
+        if (
+            !chest.opened &&
+            chest.x === player.x &&
+            chest.y === player.y
+        ) {
+
+            chest.opened = true;
+
+            player.gold += 50;
+
+            player.xp += 25;
+
+            log("💎 Treasure Found!");
+
+            levelUp();
+
+            redraw();
+
+            return;
+
+        }
+
+    }
+
+};
+// =====================================
+// Realm of Azan V4
+// Part B3 - Monster AI & Survival
+// =====================================
+
+// Monster movement
+function moveMonsters() {
+
+    for (const monster of game.monsters) {
+
+        if (!monster.alive) continue;
+
+        let dx = player.x - monster.x;
+        let dy = player.y - monster.y;
+
+        if (Math.abs(dx) + Math.abs(dy) <= 5) {
+
+            if (Math.abs(dx) > Math.abs(dy))
+                monster.x += Math.sign(dx);
+            else
+                monster.y += Math.sign(dy);
+
+        } else {
+
+            const dir = rand(4);
+
+            if (dir === 0) monster.x++;
+            if (dir === 1) monster.x--;
+            if (dir === 2) monster.y++;
+            if (dir === 3) monster.y--;
+
+        }
+
+        monster.x = Math.max(0, Math.min(WORLD_SIZE - 1, monster.x));
+        monster.y = Math.max(0, Math.min(WORLD_SIZE - 1, monster.y));
+
+    }
+
+}
+
+// Drink potion
+function usePotion() {
+
+    if (player.potions <= 0) {
+
+        log("❌ No potions left.");
+
+        return;
+
+    }
+
+    player.potions--;
+
+    player.hp += 50;
+
+    if (player.hp > player.maxHp)
+        player.hp = player.maxHp;
+
+    log("🧪 Potion used!");
+
+    redraw();
+
+}
+
+// Day / Night
+function toggleDayNight() {
+
+    game.day = !game.day;
+
+    if (game.day) {
+
+        log("☀️ Sunrise");
+
+    } else {
+
+        log("🌙 Night falls");
+
+    }
+
+}
+
+// Random weather
+function updateWeather() {
+
+    const weather = [
+
+        "☀️ Sunny",
+        "🌧 Rain",
+        "⛈ Storm",
+        "❄ Snow"
+
+    ];
+
+    game.weather = weather[rand(weather.length)];
+
+    log(game.weather);
+
+}
+
+// Every minute
+setInterval(toggleDayNight, 60000);
+
+// Every 40 seconds
+setInterval(updateWeather, 40000);
+
+// Monster movement every second
+setInterval(function(){
+
+    moveMonsters();
+
+    redraw();
+
+},1000);
+
+// Keyboard shortcut
+document.addEventListener("keydown",function(e){
+
+    if(e.key==="p" || e.key==="P"){
+
+        usePotion();
+
+    }
+
+});
+
+// =====================================
+// Realm of Azan V4
+// Part B4 - Dragon Boss & Victory
+// =====================================
+
+// ---------- Equipment ----------
+
+player.weapon = {
+    name: "Wooden Sword",
+    attack: 3
+};
+
+player.armor = {
+    name: "Traveler Armor",
+    defense: 2
+};
+
+// ---------- Dragon Battle ----------
+
+function battleBoss() {
+
+    if (!game.boss || !game.boss.alive)
+        return;
+
+    log("🐉 Dragon King Battle!");
+
+    while (
+        game.boss.hp > 0 &&
+        player.hp > 0
+    ) {
+
+        let damage = Math.max(
+            5,
+            player.attack +
+            player.weapon.attack +
+            rand(8) -
+            game.boss.defense
+        );
+
+        game.boss.hp -= damage;
+
+        log("⚔️ Dragon -" + damage);
+
+        if (game.boss.hp <= 0)
+            break;
+
+        damage = Math.max(
+            8,
+            game.boss.attack +
+            rand(10) -
+            (player.defense + player.armor.defense)
+        );
+
+        player.hp -= damage;
+
+        log("🔥 Dragon hit " + damage);
+
+    }
+
+    if (player.hp <= 0) {
+
+        player.hp = player.maxHp;
+
+        player.x = 0;
+        player.y = 0;
+
+        log("💀 Dragon defeated you.");
+
+        redraw();
+
+        return;
+
+    }
+
+    game.boss.alive = false;
+
+    player.gold += 1000;
+
+    player.xp += 500;
+
+    levelUp();
+
+    redraw();
+
+    showVictory();
+
+}
+
+// ---------- Victory ----------
+
+function showVictory(){
+
+    alert(
+`🏆 YOU WIN!
+
+Congratulations!
+
+You defeated the Dragon King!
+
+⭐ Level: ${player.level}
+
+🪙 Gold: ${player.gold}
+
+Thanks for playing
+Realm of Azan V4 Alpha`
+    );
+
+}
+
+// ---------- Replace Events ----------
+
+const oldEvents = checkEvents;
+
+checkEvents = function(){
+
+    oldEvents();
+
+    if(
+        game.boss &&
+        game.boss.alive &&
+        player.x==game.boss.x &&
+        player.y==game.boss.y
+    ){
+
+        battleBoss();
+
+    }
+
+};
+
+// ---------- Weather Bonus ----------
+
+setInterval(function(){
+
+    if(game.weather==="🌧 Rain"){
+
+        player.hp=Math.min(
+            player.hp+2,
+            player.maxHp
+        );
+
+    }
+
+},5000);
+
+// ---------- Auto Heal ----------
+
+setInterval(function(){
+
+    if(player.hp<player.maxHp){
+
+        player.hp++;
+
+        redraw();
+
+    }
+
+},3000);
+
+// ---------- Finish ----------
+
+log("🚀 Realm of Azan V4 Alpha Loaded!");
+
