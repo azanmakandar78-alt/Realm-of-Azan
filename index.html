@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title>Realm of Azan V5</title>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div id="game">
+
+    <!-- HUD -->
+
+    <div id="hud">
+
+        <div class="bar">
+            <label>HP</label>
+            <div class="progress">
+                <div id="hpBar"></div>
+            </div>
+        </div>
+
+        <div class="bar">
+            <label>Mana</label>
+            <div class="progress">
+                <div id="manaBar"></div>
+            </div>
+        </div>
+
+        <div class="bar">
+            <label>XP</label>
+            <div class="progress">
+                <div id="xpBar"></div>
+            </div>
+        </div>
+
+        <div id="stats">
+
+            <span>❤️ HP:
+                <span id="hpText"></span>
+            </span>
+
+            <span>🔷 Mana:
+                <span id="manaText"></span>
+            </span>
+
+            <span>⭐ Level:
+                <span id="levelText"></span>
+            </span>
+
+            <span>💰 Gold:
+                <span id="goldText"></span>
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- World -->
+
+    <div id="worldContainer">
+
+        <canvas id="world"
+        width="960"
+        height="640">
+        </canvas>
+
+    </div>
+
+    <!-- Battle -->
+
+    <div id="battleWindow" class="hidden">
+
+        <h2>Battle</h2>
+
+        <div id="enemyInfo"></div>
+
+        <div id="battleLog"></div>
+
+        <div id="battleButtons">
+
+            <button id="attackBtn">
+                Attack
+            </button>
+
+            <button id="magicBtn">
+                Magic
+            </button>
+
+            <button id="healBtn">
+                Heal
+            </button>
+
+            <button id="runBtn">
+                Run
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- Inventory -->
+
+    <div id="inventoryWindow" class="hidden">
+
+        <h2>Inventory</h2>
+
+        <div id="inventoryList"></div>
+
+    </div>
+
+    <!-- Equipment -->
+
+    <div id="equipmentWindow" class="hidden">
+
+        <h2>Equipment</h2>
+
+        <div id="equipmentList"></div>
+
+    </div>
+
+    <!-- Quest -->
+
+    <div id="questWindow" class="hidden">
+
+        <h2>Quest Log</h2>
+
+        <div id="questList"></div>
+
+    </div>
+
+    <!-- Settings -->
+
+    <div id="settingsWindow" class="hidden">
+
+        <h2>Settings</h2>
+
+        <label>
+
+            Difficulty
+
+            <select id="difficulty">
+
+                <option>Easy</option>
+
+                <option selected>Normal</option>
+
+                <option>Hard</option>
+
+            </select>
+
+        </label>
+
+        <label>
+
+            Volume
+
+            <input
+            type="range"
+            id="volume"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.7">
+
+        </label>
+
+        <button id="fullscreenBtn">
+
+            Fullscreen
+
+        </button>
+
+        <button id="muteBtn">
+
+            Mute
+
+        </button>
+
+    </div>
+
+    <!-- Mobile Controls -->
+
+    <div id="mobileControls">
+
+        <button id="up">▲</button>
+
+        <div>
+
+            <button id="left">◀</button>
+
+            <button id="down">▼</button>
+
+            <button id="right">▶</button>
+
+        </div>
+
+    </div>
+
+    <!-- Bottom Buttons -->
+
+    <div id="menu">
+
+        <button id="inventoryBtn">
+            Inventory
+        </button>
+
+        <button id="equipmentBtn">
+            Equipment
+        </button>
+
+        <button id="questBtn">
+            Quests
+        </button>
+
+        <button id="saveBtn">
+            Save
+        </button>
+
+        <button id="settingsBtn">
+            Settings
+        </button>
+
+    </div>
+
+</div>
+
+<!-- Modules -->
+
+<script src="monsters.js"></script>
+<script src="inventory.js"></script>
+<script src="quests.js"></script>
+<script src="battle.js"></script>
+<script src="save.js"></script>
+<script src="ui.js"></script>
+<script src="game.js"></script>
+
+</body>
+  </html>
