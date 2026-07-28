@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Realm of Azan V5</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="game-canvas" width="800" height="600"></canvas>
+
+    <!-- HUD -->
+    <div id="hud">
+      <div class="bar-group">
+        <div class="bar-label">HP</div>
+        <div class="bar-bg"><div id="hp-bar" class="bar-fill hp"></div></div>
+        <span id="hp-text">100/100</span>
+      </div>
+      <div class="bar-group">
+        <div class="bar-label">MP</div>
+        <div class="bar-bg"><div id="mp-bar" class="bar-fill mp"></div></div>
+        <span id="mp-text">50/50</span>
+      </div>
+      <div class="bar-group">
+        <div class="bar-label">XP</div>
+        <div class="bar-bg"><div id="xp-bar" class="bar-fill xp"></div></div>
+        <span id="xp-text">0/100</span>
+      </div>
+      <div id="stats-display">
+        <span>Lv <span id="level-text">1</span></span>
+        <span>Gold: <span id="gold-text">0</span></span>
+      </div>
+    </div>
+
+    <!-- Mobile Joystick -->
+    <div id="joystick-zone">
+      <div id="joystick-base">
+        <div id="joystick-knob"></div>
+      </div>
+    </div>
+
+    <!-- Action Buttons (mobile) -->
+    <div id="action-buttons">
+      <button id="btn-interact" class="action-btn">Talk / Open</button>
+      <button id="btn-menu" class="action-btn">Menu</button>
+    </div>
+
+    <!-- Menu Overlay -->
+    <div id="menu-overlay" class="overlay hidden">
+      <div class="menu-panel">
+        <h2>Menu</h2>
+        <button id="btn-inventory">Inventory</button>
+        <button id="btn-equipment">Equipment</button>
+        <button id="btn-quests">Quest Log</button>
+        <button id="btn-settings">Settings</button>
+        <button id="btn-save">Save Game</button>
+        <button id="btn-close-menu">Close</button>
+      </div>
+    </div>
+
+    <!-- Inventory Window -->
+    <div id="inventory-window" class="overlay hidden">
+      <div class="window-panel">
+        <h2>Inventory</h2>
+        <div id="inventory-grid"></div>
+        <div id="item-details"></div>
+        <button id="btn-close-inventory">Close</button>
+      </div>
+    </div>
+
+    <!-- Equipment Window -->
+    <div id="equipment-window" class="overlay hidden">
+      <div class="window-panel">
+        <h2>Equipment</h2>
+        <div id="equipment-slots"></div>
+        <div id="equip-stats"></div>
+        <button id="btn-close-equipment">Close</button>
+      </div>
+    </div>
+
+    <!-- Quest Log -->
+    <div id="quest-window" class="overlay hidden">
+      <div class="window-panel">
+        <h2>Quest Log</h2>
+        <div id="quest-list"></div>
+        <button id="btn-close-quests">Close</button>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div id="settings-window" class="overlay hidden">
+      <div class="window-panel">
+        <h2>Settings</h2>
+        <label>Difficulty:
+          <select id="difficulty-select">
+            <option value="easy">Easy</option>
+            <option value="normal" selected>Normal</option>
+            <option value="hard">Hard</option>
+          </select>
+        </label>
+        <label>Music Volume: <input type="range" id="music-volume" min="0" max="1" step="0.05" value="0.4"></label>
+        <label>SFX Volume: <input type="range" id="sfx-volume" min="0" max="1" step="0.05" value="0.6"></label>
+        <label><input type="checkbox" id="mute-toggle"> Mute All</label>
+        <button id="btn-fullscreen">Toggle Fullscreen</button>
+        <button id="btn-close-settings">Close</button>
+      </div>
+    </div>
+
+    <!-- Dialogue Box -->
+    <div id="dialogue-box" class="hidden">
+      <div id="dialogue-name"></div>
+      <div id="dialogue-text"></div>
+      <div id="dialogue-choices"></div>
+      <button id="btn-dialogue-next">Next</button>
+    </div>
+
+    <!-- Battle Screen -->
+    <div id="battle-screen" class="overlay hidden">
+      <div id="battle-enemies"></div>
+      <div id="battle-player-info"></div>
+      <div id="battle-log"></div>
+      <div id="battle-actions">
+        <button id="btn-attack">Attack</button>
+        <button id="btn-magic">Magic</button>
+        <button id="btn-item">Item</button>
+        <button id="btn-flee">Flee</button>
+      </div>
+      <div id="magic-menu" class="hidden">
+        <button data-spell="fire">Fire (10 MP)</button>
+        <button data-spell="heal">Heal (15 MP)</button>
+        <button data-spell="ice">Ice (12 MP)</button>
+        <button id="btn-magic-back">Back</button>
+      </div>
+      <div id="item-menu" class="hidden"></div>
+    </div>
+
+    <!-- Shop -->
+    <div id="shop-window" class="overlay hidden">
+      <div class="window-panel">
+        <h2 id="shop-title">Shop</h2>
+        <div id="shop-items"></div>
+        <div id="shop-player-gold"></div>
+        <button id="btn-close-shop">Close</button>
+      </div>
+    </div>
+
+    <!-- Title / Victory / Game Over -->
+    <div id="title-screen" class="overlay">
+      <h1>Realm of Azan V5</h1>
+      <p>A classic browser RPG</p>
+      <button id="btn-new-game">New Game</button>
+      <button id="btn-continue">Continue</button>
+    </div>
+
+    <div id="victory-screen" class="overlay hidden">
+      <h1>Victory!</h1>
+      <p id="victory-text"></p>
+      <button id="btn-victory-continue">Continue</button>
+    </div>
+
+    <div id="gameover-screen" class="overlay hidden">
+      <h1>Game Over</h1>
+      <p>Your journey ends here...</p>
+      <button id="btn-restart">Return to Title</button>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="hidden"></div>
+  </div>
+
+  <script type="module" src="game.js"></script>
+</body>
+</html>
