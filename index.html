@@ -3,306 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Realm of Azan V4 - A fantasy RPG adventure">
-    <meta name="theme-color" content="#1a1a2e">
-    <title>Realm of Azan V4</title>
+    <title>Realm of Azan V5</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Main Game Container -->
-    <div id="gameContainer" class="game-container">
-        <!-- Header Section -->
-        <header class="game-header">
-            <h1 class="game-title">Realm of Azan</h1>
-            <div class="header-stats">
-                <div class="stat-item">
-                    <span class="stat-label">Lvl:</span>
-                    <span id="playerLevel" class="stat-value">1</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">XP:</span>
-                    <span id="playerXP" class="stat-value">0/100</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Gold:</span>
-                    <span id="playerGold" class="stat-value">50</span>
-                </div>
-            </div>
-        </header>
 
-        <!-- Game World Section -->
-        <main class="game-main">
-            <!-- Left Sidebar - Stats -->
-            <aside class="game-sidebar left-sidebar">
-                <div class="sidebar-section">
-                    <h3>Status</h3>
-                    <div class="status-item">
-                        <span>HP</span>
-                        <div class="hp-bar-container">
-                            <div id="hpBar" class="hp-bar" style="width: 100%;"></div>
-                        </div>
-                        <span id="hpText">100/100</span>
-                    </div>
-                    <div class="status-item">
-                        <span>ATK: <span id="playerAtk">10</span></span>
-                    </div>
-                    <div class="status-item">
-                        <span>DEF: <span id="playerDef">5</span></span>
-                    </div>
-                </div>
+<div id="game">
 
-                <div class="sidebar-section">
-                    <h3>Coordinates</h3>
-                    <div id="coordinates" class="coordinates">X: 10 | Y: 10</div>
-                </div>
+    <header>
+        <h1>🏰 Realm of Azan V5</h1>
 
-                <div class="sidebar-section">
-                    <h3>Quick Actions</h3>
-                    <div class="action-buttons">
-                        <button id="btnInventory" class="btn btn-secondary">Inventory</button>
-                        <button id="btnEquipment" class="btn btn-secondary">Equipment</button>
-                        <button id="btnQuests" class="btn btn-secondary">Quests</button>
-                        <button id="btnShop" class="btn btn-secondary">Shop</button>
-                    </div>
-                </div>
-            </aside>
+        <div id="stats">
 
-            <!-- Game Canvas Area -->
-            <section class="game-canvas-section">
-                <!-- Minimap -->
-                <div class="minimap-container">
-                    <canvas id="minimapCanvas" width="120" height="120" class="minimap"></canvas>
-                </div>
+            <div>❤️ <span id="hp">100</span></div>
 
-                <!-- Game Canvas -->
-                <canvas id="gameCanvas" class="game-canvas"></canvas>
+            <div>⭐ <span id="level">1</span></div>
 
-                <!-- Movement Controls -->
-                <div class="movement-controls">
-                    <button id="btnUp" class="control-btn up-btn" aria-label="Move Up">▲</button>
-                    <div class="horizontal-controls">
-                        <button id="btnLeft" class="control-btn left-btn" aria-label="Move Left">◄</button>
-                        <button id="btnCenter" class="control-btn center-btn" aria-label="Rest">●</button>
-                        <button id="btnRight" class="control-btn right-btn" aria-label="Move Right">►</button>
-                    </div>
-                    <button id="btnDown" class="control-btn down-btn" aria-label="Move Down">▼</button>
-                </div>
-            </section>
+            <div>✨ <span id="xp">0</span></div>
 
-            <!-- Right Sidebar - Info -->
-            <aside class="game-sidebar right-sidebar">
-                <div class="sidebar-section">
-                    <h3>Current Area</h3>
-                    <div id="areaInfo" class="area-info">
-                        <p>Peaceful meadow</p>
-                        <p class="text-muted">No threats</p>
-                    </div>
-                </div>
+            <div>🪙 <span id="gold">50</span></div>
 
-                <div class="sidebar-section">
-                    <h3>Nearby</h3>
-                    <div id="nearbyInfo" class="nearby-info">
-                        <p class="text-muted">Nothing nearby</p>
-                    </div>
-                </div>
-
-                <div class="sidebar-section">
-                    <h3>Messages</h3>
-                    <div id="messageLog" class="message-log">
-                        <p class="message-item">Welcome to Realm of Azan!</p>
-                    </div>
-                </div>
-            </aside>
-        </main>
-
-        <!-- Footer Section -->
-        <footer class="game-footer">
-            <button id="btnSave" class="btn btn-primary">Save Game</button>
-            <button id="btnLoad" class="btn btn-primary">Load Game</button>
-            <button id="btnSettings" class="btn btn-secondary">Settings</button>
-        </footer>
-    </div>
-
-    <!-- Battle Modal -->
-    <div id="battleModal" class="modal hidden">
-        <div class="modal-content battle-modal">
-            <div class="battle-header">
-                <h2>Battle!</h2>
-                <button class="modal-close" aria-label="Close">✕</button>
-            </div>
-
-            <div class="battle-area">
-                <!-- Enemy Info -->
-                <div class="combatant enemy-side">
-                    <div class="combatant-name" id="enemyName">Monster</div>
-                    <canvas id="enemyCanvas" width="80" height="80" class="combatant-sprite"></canvas>
-                    <div class="hp-bar-container">
-                        <div id="enemyHpBar" class="hp-bar enemy-hp" style="width: 100%;"></div>
-                    </div>
-                    <div id="enemyHpText" class="hp-text">100/100</div>
-                </div>
-
-                <!-- Player Info -->
-                <div class="combatant player-side">
-                    <div class="combatant-name">You</div>
-                    <canvas id="playerCanvas" width="80" height="80" class="combatant-sprite"></canvas>
-                    <div class="hp-bar-container">
-                        <div id="playerBattleHpBar" class="hp-bar player-hp" style="width: 100%;"></div>
-                    </div>
-                    <div id="playerBattleHpText" class="hp-text">100/100</div>
-                </div>
-            </div>
-
-            <!-- Battle Log -->
-            <div class="battle-log" id="battleLog">
-                <p class="log-entry">Battle started!</p>
-            </div>
-
-            <!-- Battle Actions -->
-            <div class="battle-actions">
-                <button id="btnAttack" class="btn btn-danger">Attack</button>
-                <button id="btnDefend" class="btn btn-secondary">Defend</button>
-                <button id="btnUseItem" class="btn btn-secondary">Use Item</button>
-                <button id="btnFlee" class="btn btn-secondary">Flee</button>
-            </div>
         </div>
-    </div>
 
-    <!-- Inventory Modal -->
-    <div id="inventoryModal" class="modal hidden">
-        <div class="modal-content inventory-modal">
-            <div class="modal-header">
-                <h2>Inventory</h2>
-                <button class="modal-close" aria-label="Close">✕</button>
+    </header>
+
+    <main>
+
+        <div id="map"></div>
+
+        <div id="controls">
+
+            <button id="up">⬆️</button>
+
+            <div class="middle">
+
+                <button id="left">⬅️</button>
+
+                <button id="action">⚔️</button>
+
+                <button id="right">➡️</button>
+
             </div>
-            <div class="inventory-list" id="inventoryList">
-                <!-- Dynamically populated -->
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary modal-close">Close</button>
-            </div>
+
+            <button id="down">⬇️</button>
+
         </div>
+
+    </main>
+
+    <div id="log">
+        Welcome to Realm of Azan!
     </div>
 
-    <!-- Equipment Modal -->
-    <div id="equipmentModal" class="modal hidden">
-        <div class="modal-content equipment-modal">
-            <div class="modal-header">
-                <h2>Equipment</h2>
-                <button class="modal-close" aria-label="Close">✕</button>
-            </div>
-            <div class="equipment-grid">
-                <div class="equipment-slot">
-                    <span>Head</span>
-                    <div id="equipHead" class="equipment-item">—</div>
-                </div>
-                <div class="equipment-slot">
-                    <span>Body</span>
-                    <div id="equipBody" class="equipment-item">—</div>
-                </div>
-                <div class="equipment-slot">
-                    <span>Hands</span>
-                    <div id="equipHands" class="equipment-item">—</div>
-                </div>
-                <div class="equipment-slot">
-                    <span>Legs</span>
-                    <div id="equipLegs" class="equipment-item">—</div>
-                </div>
-                <div class="equipment-slot">
-                    <span>Feet</span>
-                    <div id="equipFeet" class="equipment-item">—</div>
-                </div>
-                <div class="equipment-slot">
-                    <span>Weapon</span>
-                    <div id="equipWeapon" class="equipment-item">—</div>
-                </div>
-                <div class="equipment-slot">
-                    <span>Shield</span>
-                    <div id="equipShield" class="equipment-item">—</div>
-                </div>
-                <div class="equipment-slot">
-                    <span>Accessory</span>
-                    <div id="equipAccessory" class="equipment-item">—</div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary modal-close">Close</button>
-            </div>
-        </div>
-    </div>
+</div>
 
-    <!-- Quests Modal -->
-    <div id="questsModal" class="modal hidden">
-        <div class="modal-content quests-modal">
-            <div class="modal-header">
-                <h2>Quests</h2>
-                <button class="modal-close" aria-label="Close">✕</button>
-            </div>
-            <div class="quests-list" id="questsList">
-                <!-- Dynamically populated -->
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary modal-close">Close</button>
-            </div>
-        </div>
-    </div>
+<script src="game.js"></script>
 
-    <!-- Shop Modal -->
-    <div id="shopModal" class="modal hidden">
-        <div class="modal-content shop-modal">
-            <div class="modal-header">
-                <h2>Shop</h2>
-                <button class="modal-close" aria-label="Close">✕</button>
-            </div>
-            <div class="shop-list" id="shopList">
-                <!-- Dynamically populated -->
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary modal-close">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="modal hidden">
-        <div class="modal-content settings-modal">
-            <div class="modal-header">
-                <h2>Settings</h2>
-                <button class="modal-close" aria-label="Close">✕</button>
-            </div>
-            <div class="settings-content">
-                <div class="settings-group">
-                    <label class="setting-item">
-                        <input type="checkbox" id="soundToggle" checked>
-                        <span>Sound Effects</span>
-                    </label>
-                    <label class="setting-item">
-                        <input type="checkbox" id="musicToggle" checked>
-                        <span>Background Music</span>
-                    </label>
-                </div>
-                <button id="btnReset" class="btn btn-danger">Reset Game</button>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary modal-close">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Loading Screen -->
-    <div id="loadingScreen" class="loading-screen hidden">
-        <div class="loading-content">
-            <h2>Loading...</h2>
-            <div class="loading-spinner"></div>
-        </div>
-    </div>
-
-    <!-- Scripts -->
-    <script src="save.js"></script>
-    <script src="monsters.js"></script>
-    <script src="quests.js"></script>
-    <script src="inventory.js"></script>
-    <script src="battle.js"></script>
-    <script src="game.js"></script>
 </body>
-</html>
+</html>                
