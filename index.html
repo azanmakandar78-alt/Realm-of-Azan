@@ -1,245 +1,398 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta
-name="viewport"
-content="width=device-width,initial-scale=1.0">
-
-<title>Realm of Azan V5</title>
-
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Realm of Azan V5 - A Complete Browser RPG Game">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>Realm of Azan V5 - RPG Game</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+    <div id="gameContainer" class="game-container">
+        <!-- Main Game Area -->
+        <div id="mainGame" class="main-game">
+            <!-- Canvas for game world -->
+            <canvas id="gameCanvas" width="1024" height="768"></canvas>
+            
+            <!-- Mobile Controls -->
+            <div id="mobileControls" class="mobile-controls">
+                <div class="joystick-container">
+                    <div id="joystick" class="joystick">
+                        <div id="joystickHandle" class="joystick-handle"></div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button id="actionBtn" class="action-btn">Interact</button>
+                    <button id="attackBtn" class="action-btn attack">Attack</button>
+                </div>
+            </div>
 
-<div id="game">
+            <!-- HUD - Heads Up Display -->
+            <div id="hud" class="hud">
+                <!-- Player Stats Top Left -->
+                <div class="player-stats-panel">
+                    <div class="player-header">
+                        <h3 id="playerName">Player</h3>
+                        <span id="playerLevel" class="level-badge">Lv. 1</span>
+                    </div>
+                    
+                    <div class="stat-bar">
+                        <label>HP</label>
+                        <div class="bar-container">
+                            <div id="hpBar" class="bar hp-bar"></div>
+                            <span id="hpText" class="bar-text">100/100</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-bar">
+                        <label>Mana</label>
+                        <div class="bar-container">
+                            <div id="manaBar" class="bar mana-bar"></div>
+                            <span id="manaText" class="bar-text">50/50</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-bar">
+                        <label>XP</label>
+                        <div class="bar-container">
+                            <div id="xpBar" class="bar xp-bar"></div>
+                            <span id="xpText" class="bar-text">0/100</span>
+                        </div>
+                    </div>
 
-    <!-- HUD -->
+                    <div class="gold-display">
+                        <span id="goldAmount">Gold: 0</span>
+                    </div>
+                </div>
 
-    <div id="hud">
+                <!-- Mini Map Top Right -->
+                <div class="minimap-panel">
+                    <h4>Map</h4>
+                    <canvas id="minimapCanvas" width="150" height="150" class="minimap"></canvas>
+                </div>
 
-        <div class="bar">
-            <label>HP</label>
-            <div class="progress">
-                <div id="hpBar"></div>
+                <!-- Bottom Left - Current Status -->
+                <div class="status-panel">
+                    <h4>Status</h4>
+                    <div id="statusDisplay" class="status-display">
+                        <p id="currentStatus">Ready</p>
+                    </div>
+                </div>
+
+                <!-- Bottom Right - Quick Info -->
+                <div class="info-panel">
+                    <h4>Info</h4>
+                    <div id="infoDisplay" class="info-display">
+                        <p id="currentInfo">Walking around...</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="bar">
-            <label>Mana</label>
-            <div class="progress">
-                <div id="manaBar"></div>
+        <!-- UI Panels -->
+        <div id="uiPanels" class="ui-panels">
+            <!-- Inventory Panel -->
+            <div id="inventoryPanel" class="panel inventory-panel">
+                <div class="panel-header">
+                    <h2>Inventory</h2>
+                    <button class="close-btn" data-panel="inventory">×</button>
+                </div>
+                <div class="panel-content">
+                    <div class="inventory-tabs">
+                        <button class="tab-btn active" data-tab="items">Items</button>
+                        <button class="tab-btn" data-tab="equipment">Equipment</button>
+                        <button class="tab-btn" data-tab="potions">Potions</button>
+                    </div>
+                    <div id="inventoryItems" class="inventory-items">
+                        <div class="empty-message">Inventory is empty</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Equipment Panel -->
+            <div id="equipmentPanel" class="panel equipment-panel">
+                <div class="panel-header">
+                    <h2>Equipment</h2>
+                    <button class="close-btn" data-panel="equipment">×</button>
+                </div>
+                <div class="panel-content">
+                    <div class="equipment-slots">
+                        <div class="equipment-slot">
+                            <label>Head</label>
+                            <div id="headSlot" class="slot">Empty</div>
+                        </div>
+                        <div class="equipment-slot">
+                            <label>Chest</label>
+                            <div id="chestSlot" class="slot">Empty</div>
+                        </div>
+                        <div class="equipment-slot">
+                            <label>Hands</label>
+                            <div id="handsSlot" class="slot">Empty</div>
+                        </div>
+                        <div class="equipment-slot">
+                            <label>Legs</label>
+                            <div id="legsSlot" class="slot">Empty</div>
+                        </div>
+                        <div class="equipment-slot">
+                            <label>Feet</label>
+                            <div id="feetSlot" class="slot">Empty</div>
+                        </div>
+                        <div class="equipment-slot">
+                            <label>Weapon</label>
+                            <div id="weaponSlot" class="slot">Empty</div>
+                        </div>
+                        <div class="equipment-slot">
+                            <label>Shield</label>
+                            <div id="shieldSlot" class="slot">Empty</div>
+                        </div>
+                    </div>
+                    <div class="equipment-stats">
+                        <h4>Total Stats</h4>
+                        <div class="stat-list">
+                            <div class="stat-item">
+                                <span>Attack:</span>
+                                <span id="totalAttack">5</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Defense:</span>
+                                <span id="totalDefense">5</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>HP Bonus:</span>
+                                <span id="totalHPBonus">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Mana Bonus:</span>
+                                <span id="totalManaBonus">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quest Log Panel -->
+            <div id="questPanel" class="panel quest-panel">
+                <div class="panel-header">
+                    <h2>Quest Log</h2>
+                    <button class="close-btn" data-panel="quests">×</button>
+                </div>
+                <div class="panel-content">
+                    <div class="quest-tabs">
+                        <button class="tab-btn active" data-tab="active">Active</button>
+                        <button class="tab-btn" data-tab="completed">Completed</button>
+                    </div>
+                    <div id="questList" class="quest-list">
+                        <div class="empty-message">No active quests</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Battle Panel -->
+            <div id="battlePanel" class="panel battle-panel hidden">
+                <div class="panel-header">
+                    <h2>Battle</h2>
+                </div>
+                <div class="panel-content">
+                    <div class="battle-area">
+                        <div class="combatant player-combatant">
+                            <h4 id="playerBattleName">Player</h4>
+                            <div class="combatant-hp">
+                                <div id="playerBattleHp" class="hp-bar-battle"></div>
+                            </div>
+                            <p id="playerBattleHpText">100/100</p>
+                        </div>
+                        
+                        <div class="vs-divider">VS</div>
+                        
+                        <div class="combatant enemy-combatant">
+                            <h4 id="enemyBattleName">Enemy</h4>
+                            <div class="combatant-hp">
+                                <div id="enemyBattleHp" class="hp-bar-battle"></div>
+                            </div>
+                            <p id="enemyBattleHpText">50/50</p>
+                        </div>
+                    </div>
+
+                    <div id="battleLog" class="battle-log">
+                        <p class="log-entry">Battle started!</p>
+                    </div>
+
+                    <div class="battle-actions">
+                        <button id="battleAttackBtn" class="battle-btn">Attack</button>
+                        <button id="battleMagicBtn" class="battle-btn">Magic</button>
+                        <button id="battleHealBtn" class="battle-btn">Heal</button>
+                        <button id="battleFleeBtn" class="battle-btn flee">Flee</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shop Panel -->
+            <div id="shopPanel" class="panel shop-panel hidden">
+                <div class="panel-header">
+                    <h2 id="shopName">Shop</h2>
+                    <button class="close-btn" data-panel="shop">×</button>
+                </div>
+                <div class="panel-content">
+                    <div class="shop-tabs">
+                        <button class="tab-btn active" data-tab="buy">Buy</button>
+                        <button class="tab-btn" data-tab="sell">Sell</button>
+                    </div>
+                    <div id="shopItems" class="shop-items">
+                        <div class="empty-message">No items available</div>
+                    </div>
+                    <div class="player-gold-display">
+                        <span id="shopGold">Gold: 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dialogue Panel -->
+            <div id="dialoguePanel" class="panel dialogue-panel hidden">
+                <div class="panel-header">
+                    <h2 id="npcName">NPC</h2>
+                </div>
+                <div class="panel-content">
+                    <p id="dialogueText">Hello, adventurer!</p>
+                    <div id="dialogueOptions" class="dialogue-options">
+                        <!-- Dialogue options will be generated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Panel -->
+            <div id="settingsPanel" class="panel settings-panel">
+                <div class="panel-header">
+                    <h2>Settings</h2>
+                    <button class="close-btn" data-panel="settings">×</button>
+                </div>
+                <div class="panel-content">
+                    <div class="setting-group">
+                        <label for="difficultySelect">Difficulty:</label>
+                        <select id="difficultySelect">
+                            <option value="easy">Easy</option>
+                            <option value="normal" selected>Normal</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label for="volumeSlider">Volume:</label>
+                        <input type="range" id="volumeSlider" min="0" max="100" value="70">
+                        <span id="volumeValue">70%</span>
+                    </div>
+
+                    <div class="setting-group checkbox">
+                        <input type="checkbox" id="muteCheckbox">
+                        <label for="muteCheckbox">Mute All Sounds</label>
+                    </div>
+
+                    <div class="setting-group checkbox">
+                        <input type="checkbox" id="fullscreenCheckbox">
+                        <label for="fullscreenCheckbox">Fullscreen</label>
+                    </div>
+
+                    <div class="setting-group checkbox">
+                        <input type="checkbox" id="effectsCheckbox" checked>
+                        <label for="effectsCheckbox">Visual Effects</label>
+                    </div>
+
+                    <div class="button-group">
+                        <button id="saveGameBtn" class="setting-btn save">Save Game</button>
+                        <button id="loadGameBtn" class="setting-btn load">Load Game</button>
+                        <button id="newGameBtn" class="setting-btn new">New Game</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Over Panel -->
+            <div id="gameOverPanel" class="panel game-over-panel hidden">
+                <div class="panel-content">
+                    <h2 id="gameOverTitle">Game Over</h2>
+                    <p id="gameOverMessage">You were defeated!</p>
+                    <div class="game-over-stats">
+                        <p>Level Reached: <span id="finalLevel">1</span></p>
+                        <p>Gold Collected: <span id="finalGold">0</span></p>
+                        <p>Enemies Defeated: <span id="finalEnemies">0</span></p>
+                    </div>
+                    <div class="game-over-buttons">
+                        <button id="retryBtn" class="game-btn">Retry</button>
+                        <button id="mainMenuBtn" class="game-btn">Main Menu</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Victory Panel -->
+            <div id="victoryPanel" class="panel victory-panel hidden">
+                <div class="panel-content">
+                    <h2>Victory!</h2>
+                    <p id="victoryMessage">You defeated the Dragon King!</p>
+                    <div class="victory-rewards">
+                        <h4>Rewards:</h4>
+                        <p>Gold: <span id="victoryGold">0</span></p>
+                        <p>XP: <span id="victoryXP">0</span></p>
+                    </div>
+                    <div class="victory-buttons">
+                        <button id="continueBtn" class="game-btn">Continue</button>
+                        <button id="mainMenuBtn2" class="game-btn">Main Menu</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="bar">
-            <label>XP</label>
-            <div class="progress">
-                <div id="xpBar"></div>
+        <!-- Top Menu Bar -->
+        <div id="menuBar" class="menu-bar">
+            <div class="menu-left">
+                <h1>Realm of Azan V5</h1>
+            </div>
+            <div class="menu-center">
+                <button id="menuInventoryBtn" class="menu-btn" title="Inventory (I)">📦 Inventory</button>
+                <button id="menuEquipmentBtn" class="menu-btn" title="Equipment (E)">⚔️ Equipment</button>
+                <button id="menuQuestBtn" class="menu-btn" title="Quests (Q)">📋 Quests</button>
+                <button id="menuStatsBtn" class="menu-btn" title="Stats (S)">📊 Stats</button>
+            </div>
+            <div class="menu-right">
+                <button id="menuSettingsBtn" class="menu-btn" title="Settings">⚙️ Settings</button>
+                <button id="menuMapBtn" class="menu-btn" title="Map">🗺️ Map</button>
             </div>
         </div>
 
-        <div id="stats">
+        <!-- Floating Damage Text -->
+        <div id="floatingTexts" class="floating-texts"></div>
 
-            <span>❤️ HP:
-                <span id="hpText"></span>
-            </span>
+        <!-- Notifications -->
+        <div id="notifications" class="notifications"></div>
 
-            <span>🔷 Mana:
-                <span id="manaText"></span>
-            </span>
-
-            <span>⭐ Level:
-                <span id="levelText"></span>
-            </span>
-
-            <span>💰 Gold:
-                <span id="goldText"></span>
-            </span>
-
+        <!-- Achievement Popup -->
+        <div id="achievementPopup" class="achievement-popup hidden">
+            <div class="achievement-content">
+                <div class="achievement-icon">🏆</div>
+                <div class="achievement-text">
+                    <h4 id="achievementTitle">New Achievement!</h4>
+                    <p id="achievementDesc">Description</p>
+                </div>
+            </div>
         </div>
-
     </div>
 
-    <!-- World -->
-
-    <div id="worldContainer">
-
-        <canvas id="world"
-        width="960"
-        height="640">
-        </canvas>
-
-    </div>
-
-    <!-- Battle -->
-
-    <div id="battleWindow" class="hidden">
-
-        <h2>Battle</h2>
-
-        <div id="enemyInfo"></div>
-
-        <div id="battleLog"></div>
-
-        <div id="battleButtons">
-
-            <button id="attackBtn">
-                Attack
-            </button>
-
-            <button id="magicBtn">
-                Magic
-            </button>
-
-            <button id="healBtn">
-                Heal
-            </button>
-
-            <button id="runBtn">
-                Run
-            </button>
-
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <h1>Realm of Azan V5</h1>
+            <p>Loading...</p>
+            <div class="loading-bar">
+                <div id="loadingBarFill" class="loading-bar-fill"></div>
+            </div>
         </div>
-
     </div>
 
-    <!-- Inventory -->
-
-    <div id="inventoryWindow" class="hidden">
-
-        <h2>Inventory</h2>
-
-        <div id="inventoryList"></div>
-
-    </div>
-
-    <!-- Equipment -->
-
-    <div id="equipmentWindow" class="hidden">
-
-        <h2>Equipment</h2>
-
-        <div id="equipmentList"></div>
-
-    </div>
-
-    <!-- Quest -->
-
-    <div id="questWindow" class="hidden">
-
-        <h2>Quest Log</h2>
-
-        <div id="questList"></div>
-
-    </div>
-
-    <!-- Settings -->
-
-    <div id="settingsWindow" class="hidden">
-
-        <h2>Settings</h2>
-
-        <label>
-
-            Difficulty
-
-            <select id="difficulty">
-
-                <option>Easy</option>
-
-                <option selected>Normal</option>
-
-                <option>Hard</option>
-
-            </select>
-
-        </label>
-
-        <label>
-
-            Volume
-
-            <input
-            type="range"
-            id="volume"
-            min="0"
-            max="1"
-            step="0.01"
-            value="0.7">
-
-        </label>
-
-        <button id="fullscreenBtn">
-
-            Fullscreen
-
-        </button>
-
-        <button id="muteBtn">
-
-            Mute
-
-        </button>
-
-    </div>
-
-    <!-- Mobile Controls -->
-
-    <div id="mobileControls">
-
-        <button id="up">▲</button>
-
-        <div>
-
-            <button id="left">◀</button>
-
-            <button id="down">▼</button>
-
-            <button id="right">▶</button>
-
-        </div>
-
-    </div>
-
-    <!-- Bottom Buttons -->
-
-    <div id="menu">
-
-        <button id="inventoryBtn">
-            Inventory
-        </button>
-
-        <button id="equipmentBtn">
-            Equipment
-        </button>
-
-        <button id="questBtn">
-            Quests
-        </button>
-
-        <button id="saveBtn">
-            Save
-        </button>
-
-        <button id="settingsBtn">
-            Settings
-        </button>
-
-    </div>
-
-</div>
-
-<!-- Modules -->
-
-<script src="monsters.js"></script>
-<script src="inventory.js"></script>
-<script src="quests.js"></script>
-<script src="battle.js"></script>
-<script src="save.js"></script>
-<script src="ui.js"></script>
-<script src="game.js"></script>
-
+    <!-- Scripts -->
+    <script src="monsters.js"></script>
+    <script src="inventory.js"></script>
+    <script src="quests.js"></script>
+    <script src="save.js"></script>
+    <script src="ui.js"></script>
+    <script src="battle.js"></script>
+    <script src="game.js"></script>
 </body>
-  </html>
+</html>
