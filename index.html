@@ -1,64 +1,164 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Realm of Azan V5</title>
 
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-<div id="game">
-
-    <header>
-        <h1>🏰 Realm of Azan V5</h1>
-
-        <div id="stats">
-
-            <div>❤️ <span id="hp">100</span></div>
-
-            <div>⭐ <span id="level">1</span></div>
-
-            <div>✨ <span id="xp">0</span></div>
-
-            <div>🪙 <span id="gold">50</span></div>
-
-        </div>
-
-    </header>
-
-    <main>
-
-        <div id="map"></div>
-
-        <div id="controls">
-
-            <button id="up">⬆️</button>
-
-            <div class="middle">
-
-                <button id="left">⬅️</button>
-
-                <button id="action">⚔️</button>
-
-                <button id="right">➡️</button>
-
-            </div>
-
-            <button id="down">⬇️</button>
-
-        </div>
-
-    </main>
-
-    <div id="log">
-        Welcome to Realm of Azan!
-    </div>
-
-</div>
-
-<script src="game.js"></script>
-
-</body>
-</html>                
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+-    <meta charset="UTF-8">
+-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+-    <title>Realm of Azan V5</title>
+-
+-    <link rel="stylesheet" href="style.css">
++  <meta charset="UTF-8" />
++  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
++  <meta name="description" content="Realm of Azan V5 - a complete vanilla JavaScript browser RPG." />
++  <title>Realm of Azan V5</title>
++  <link rel="stylesheet" href="style.css" />
+ </head>
+ <body>
+-
+-<div id="game">
+-
+-    <header>
+-        <h1>🏰 Realm of Azan V5</h1>
+-
+-        <div id="stats">
+-
+-            <div>❤️ <span id="hp">100</span></div>
+-
+-            <div>⭐ <span id="level">1</span></div>
+-
+-            <div>✨ <span id="xp">0</span></div>
+-
+-            <div>🪙 <span id="gold">50</span></div>
+-
++  <div id="app" class="app">
++    <header class="topbar">
++      <div class="brand">
++        <span class="brand-mark">⚔️</span>
++        <div>
++          <h1>Realm of Azan V5</h1>
++          <p id="statusLine">Loading the realm...</p>
+         </div>
+-
++      </div>
++      <div class="resource-panel" aria-label="Player resources">
++        <div class="bar-row"><span>HP</span><div class="bar"><div id="hpBar" class="bar-fill hp"></div></div><strong id="hpText">0/0</strong></div>
++        <div class="bar-row"><span>MP</span><div class="bar"><div id="manaBar" class="bar-fill mana"></div></div><strong id="manaText">0/0</strong></div>
++        <div class="bar-row"><span>XP</span><div class="bar"><div id="xpBar" class="bar-fill xp"></div></div><strong id="xpText">0/0</strong></div>
++      </div>
++      <div class="stats-pill" id="statsPill">Lv 1 · 0g</div>
+     </header>
+ 
+-    <main>
+-
+-        <div id="map"></div>
+-
+-        <div id="controls">
+-
+-            <button id="up">⬆️</button>
+-
+-            <div class="middle">
+-
+-                <button id="left">⬅️</button>
+-
+-                <button id="action">⚔️</button>
+-
+-                <button id="right">➡️</button>
+-
+-            </div>
++    <main class="game-shell">
++      <section class="viewport-card">
++        <canvas id="gameCanvas" width="640" height="480" aria-label="Realm of Azan game map"></canvas>
++        <div id="weatherOverlay" class="weather-overlay"></div>
++        <div id="centerMessage" class="center-message hidden"></div>
++      </section>
++
++      <aside class="side-panel">
++        <nav class="tabs" aria-label="Game panels">
++          <button data-panel="inventory" class="tab active">Inventory</button>
++          <button data-panel="equipment" class="tab">Gear</button>
++          <button data-panel="quests" class="tab">Quests</button>
++          <button data-panel="settings" class="tab">Settings</button>
++        </nav>
++        <section id="inventoryPanel" class="panel active"></section>
++        <section id="equipmentPanel" class="panel"></section>
++        <section id="questsPanel" class="panel"></section>
++        <section id="settingsPanel" class="panel"></section>
++      </aside>
++    </main>
+ 
+-            <button id="down">⬇️</button>
++    <footer class="bottom-ui">
++      <div class="controls-help">
++        <strong>Controls:</strong> WASD/Arrow keys move · Space/Enter interact · I inventory · Q quests · Save anytime.
++      </div>
++      <div class="action-row">
++        <button id="saveButton">Manual Save</button>
++        <button id="loadButton">Load</button>
++        <button id="fullscreenButton">Fullscreen</button>
++      </div>
++    </footer>
++
++    <div id="joystick" class="joystick" aria-label="Mobile movement joystick"><div id="joystickKnob" class="joystick-knob"></div></div>
++    <button id="mobileAction" class="mobile-action" aria-label="Interact">✦</button>
++
++    <div id="dialogueModal" class="modal hidden" role="dialog" aria-modal="true">
++      <div class="modal-card">
++        <h2 id="dialogueName">NPC</h2>
++        <p id="dialogueText"></p>
++        <div id="dialogueActions" class="modal-actions"></div>
++      </div>
++    </div>
+ 
++    <div id="shopModal" class="modal hidden" role="dialog" aria-modal="true">
++      <div class="modal-card large">
++        <h2 id="shopTitle">Shop</h2>
++        <p id="shopGold">Gold: 0</p>
++        <div class="shop-grid">
++          <div><h3>Buy</h3><div id="shopBuyList"></div></div>
++          <div><h3>Sell</h3><div id="shopSellList"></div></div>
+         </div>
+-
+-    </main>
+-
+-    <div id="log">
+-        Welcome to Realm of Azan!
++        <div class="modal-actions"><button id="closeShopButton">Close</button></div>
++      </div>
+     </div>
+ 
+-</div>
++    <div id="battleModal" class="modal hidden" role="dialog" aria-modal="true">
++      <div class="modal-card battle-card">
++        <div class="battle-head">
++          <div>
++            <h2 id="enemyName">Enemy</h2>
++            <div class="bar"><div id="enemyHpBar" class="bar-fill enemy"></div></div>
++            <p id="enemyHpText">0/0</p>
++          </div>
++          <div class="enemy-sprite" id="enemySprite">?</div>
++        </div>
++        <div id="battleLog" class="battle-log"></div>
++        <div id="battleActions" class="battle-actions">
++          <button data-action="attack">Attack</button>
++          <button data-action="magic">Firebolt (6 MP)</button>
++          <button data-action="heal">Heal (8 MP)</button>
++          <button data-action="item">Potion</button>
++          <button data-action="flee">Flee</button>
++        </div>
++      </div>
++    </div>
+ 
+-<script src="game.js"></script>
++    <div id="endingScreen" class="ending hidden">
++      <div class="ending-card">
++        <h2 id="endingTitle">Victory</h2>
++        <p id="endingText"></p>
++        <button id="restartButton">Begin Anew</button>
++      </div>
++    </div>
++  </div>
+ 
++  <script type="module" src="game.js"></script>
+ </body>
+-</html>                
++</html>
