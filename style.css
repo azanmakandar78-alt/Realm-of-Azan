@@ -2,25 +2,29 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Arial,sans-serif;
 }
 
 body{
     background:#111;
     color:white;
+    font-family:Arial,sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
 }
 
 #game{
-    max-width:900px;
-    margin:auto;
-    padding:10px;
+    width:100%;
+    max-width:430px;
+    padding:15px;
 }
 
 header{
     background:#222;
-    padding:12px;
     border-radius:12px;
-    margin-bottom:10px;
+    padding:12px;
+    margin-bottom:12px;
 }
 
 h1{
@@ -29,45 +33,52 @@ h1{
 }
 
 #stats{
-    display:flex;
-    justify-content:space-around;
-    flex-wrap:wrap;
-    gap:10px;
-}
-
-#map{
     display:grid;
-    grid-template-columns:repeat(20,1fr);
-    gap:2px;
-    background:#000;
-    padding:5px;
-    border-radius:10px;
-    min-height:420px;
-}
-
-.tile{
-    aspect-ratio:1;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:#1d5d2d;
-    font-size:20px;
-    border-radius:4px;
-}
-
-#controls{
-    margin-top:12px;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
     text-align:center;
 }
 
+#map{
+    width:100%;
+    aspect-ratio:1;
+    background:#2b5d34;
+    border:3px solid #444;
+    border-radius:12px;
+    display:grid;
+    grid-template-columns:repeat(15,1fr);
+    grid-template-rows:repeat(15,1fr);
+    margin:15px auto;
+}
+
+.tile{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:18px;
+    user-select:none;
+}
+
+#controls{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    margin-top:10px;
+}
+
+.middle{
+    display:flex;
+    gap:10px;
+}
+
 #controls button{
-    width:70px;
-    height:70px;
-    margin:4px;
-    font-size:28px;
+    width:65px;
+    height:65px;
+    font-size:26px;
     border:none;
     border-radius:12px;
-    background:#444;
+    background:#333;
     color:white;
 }
 
@@ -76,9 +87,11 @@ h1{
 }
 
 #log{
-    margin-top:12px;
-    background:#1a1a1a;
-    padding:12px;
-    border-radius:10px;
-    min-height:120px;
+    margin-top:15px;
+    background:#222;
+    border-radius:12px;
+    padding:10px;
+    min-height:90px;
+    overflow-y:auto;
+    font-size:14px;
 }
